@@ -248,6 +248,10 @@ const domDisplay = (function() {
 
     const startBtn = document.querySelector('.start');
     startBtn.addEventListener('click', gameController.startGame);
+
+
+    const restartBtn = document.querySelector('.restart');
+    restartBtn.addEventListener('click', gameController.restartGame);
     return {
         populateDisplay, 
         redrawDisplay,
