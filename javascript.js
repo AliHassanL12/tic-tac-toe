@@ -119,7 +119,6 @@ const gameController = (function() {
     }
 
     function playRound(pos) {
-        if (gameOver) return
         if (!gameboard.checkCellAvailability(pos)) {
             domDisplay.writeMessage('That cell is already taken! Choose another');
             return;
@@ -155,12 +154,17 @@ const gameController = (function() {
             return true;
         }
     }
+
+    function getGameOver() {
+        return gameOver;
+    }
     return {
         checkWin,
         playRound,
         startGame,
         setPlayerNames,
-        restartGame
+        restartGame, 
+        getGameOver
     }
 })();
 
@@ -181,7 +185,7 @@ const domDisplay = (function() {
     function attachListener() {
         const cells = document.querySelectorAll('.cell');
         cells.forEach((cell) => {
-            cell.addEventListener('click', findIndex)
+            cell.addEventListener('click', checkPlacement)
         })
 
         const enterBtn = document.querySelector('.enter');
@@ -211,9 +215,14 @@ const domDisplay = (function() {
         dialog.close();
     }
 
-    function findIndex() {
+    function checkPlacement() {
+        if (gameController.getGameOver()) return; 
+
         const index = Array.from(this.parentNode.children).indexOf(this) + 1;
-        gameController.playRound(index);
+
+        if (gameboard.checkCellAvailability(index)) gameController.playRound(index);
+        else domDisplay.writeMessage('That cell is already taken! Choose another');
+        
     }
 
     function redrawDisplay() {
