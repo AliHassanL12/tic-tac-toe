@@ -1,11 +1,25 @@
+/*
+GAME CONTROLLER INITIALISES VALUES
+CREATE PLAYER X AND PLAYER O
+CURRENT INITIAL PLAYER IS X 
+GAMECONTROLLER STARTS GAME
+TAKE INPUT FROM USER FOR POSITION
+PLACE CURRENT PLAYER MARKER IN POSITION
+SWITCH PLAYERS
+START ANOTHER ROUND
+IF EITHER PLAYER WINS OR PLACES IN GAMEBOARD RUN OUT
+END GAME AND ANNOUNCE WINNER
+RESET BOARD
 
+*/
 const gameboard = (function() {
     let gameboard = ['', '', '','', '', '','', '', ''];
 
     function writeToBoard(pos, marker) {
         pos = pos - 1; // account for how indexes are counted in arrays
-        gameboard.splice(pos, 0, marker);
+        gameboard.splice(pos, 1, marker);
         displayBoard();
+        gameController.checkWin(gameboard);
     }
 
     function displayBoard() {
@@ -15,9 +29,59 @@ const gameboard = (function() {
     function resetBoard() {
         gameboard = ['', '', '','', '', '','', '', ''];
     }
+
+    function getBoard() {
+        return gameboard;
+    }
     return {
         writeToBoard, 
         displayBoard,
-        resetBoard
+        resetBoard,
+        getBoard
     }
 })();
+
+function createPlayer(marker) {
+
+    function placeMarker(pos) {
+        gameboard.writeToBoard(pos, marker)
+    }
+
+    return {
+        placeMarker
+    }
+}
+
+const gameController = (function() {
+
+    function checkWin(board) {
+        const row = checkRow(board);
+        if (row) {
+            console.log("My, my, we've got ourselves a straggler")
+        }
+    }
+
+    function checkRow(board) {
+        for (let i = 0; i < board.length; i += 3) {
+            // check if row is all equal to one another and if so, return true;
+            if (board[i] === board[i+1] && board[i+1] === board[i+2] && board[i]) {
+                return true;
+            }
+        }
+    }
+
+    return {
+        checkWin
+    }
+})();
+
+const x = createPlayer('x');
+const o = createPlayer('o');
+
+/*
+Winning conditions:
+3 in a row (1,2,3 - 4,5,6 - 7,8,9)
+3 in a column (1,4,7 - 2,5,8 - 3, 6, 9)
+3 in a diagonal (1,5,9 - 3,5,7)
+*/
+
