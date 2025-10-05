@@ -19,6 +19,7 @@ const gameboard = (function() {
         pos = pos - 1; // account for how indexes are counted in arrays
         gameboard.splice(pos, 1, marker);
         displayBoard();
+        domDisplay.redrawDisplay()
         gameController.checkWin(gameboard);
     }
 
@@ -115,10 +116,33 @@ const domDisplay = (function() {
             div.classList.add('cell');
             container.appendChild(div);
         }
+
+        attachListener();
+    }
+
+    function attachListener() {
+        const cells = document.querySelectorAll('.cell');
+        cells.forEach((cell) => {
+            cell.addEventListener('click', findIndex)
+        })
+    }
+
+    function findIndex() {
+        const index = Array.from(this.parentNode.children).indexOf(this)
+        x.placeMarker(index+1);
+    }
+
+    function redrawDisplay() {
+        const container = document.querySelector('.container');
+        while (container.firstChild) {
+            container.removeChild(container.lastChild);
+        }
+        populateDisplay();
     }
 
     return {
-        populateDisplay
+        populateDisplay, 
+        redrawDisplay
     }
 })();
 
