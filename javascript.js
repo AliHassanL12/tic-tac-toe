@@ -119,10 +119,6 @@ const gameController = (function() {
     }
 
     function playRound(pos) {
-        if (!gameboard.checkCellAvailability(pos)) {
-            domDisplay.writeMessage('That cell is already taken! Choose another');
-            return;
-        }
         domDisplay.writeMessage('');
         currentPlayer.placeMarker(pos);
         alternatePlayers();
