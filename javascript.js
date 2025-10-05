@@ -1,5 +1,5 @@
 const gameboard = (function() {
-    let gameboard = ['x', 'o', 'x','', '', '','', '', ''];
+    let gameboard = ['', '', '','', '', '','', '', ''];
 
     function writeToBoard(pos, marker) {
         pos = pos - 1; // account for how indexes are counted in arrays
@@ -21,11 +21,16 @@ const gameboard = (function() {
         return gameboard;
     }
 
+    function checkCellAvailability(i) {
+        if (gameboard[i-1]) return false; 
+        return true;
+    }
     return {
         writeToBoard, 
         displayBoard,
         resetBoard,
-        getBoard
+        getBoard,
+        checkCellAvailability
     }
 })();
 
@@ -35,8 +40,13 @@ function createPlayer(marker) {
         gameboard.writeToBoard(pos, marker)
     }
 
+    function getMarker() {
+        return marker;
+    }
+
     return {
-        placeMarker
+        placeMarker,
+        getMarker
     }
 }
 
@@ -53,7 +63,7 @@ const gameController = (function() {
         const diagonal = checkDiagonal(board);
         const draw = checkDraw(board);
         if (row || column || diagonal) {
-            console.log("My, my, we've got ourselves a straggler")
+            domDisplay.announceWinner(currentPlayer.getMarker());
         } else if (draw) {
             console.log('draw');
         }
@@ -91,6 +101,11 @@ const gameController = (function() {
     }
 
     function playRound(pos) {
+        if (!gameboard.checkCellAvailability(pos)) {
+            domDisplay.writeMessage('That cell is already taken! Choose another');
+            return;
+        }
+        domDisplay.writeMessage('');
         currentPlayer.placeMarker(pos);
         alternatePlayers();
     }
@@ -138,9 +153,21 @@ const domDisplay = (function() {
         populateDisplay();
     }
 
+    function writeMessage(msg) {
+        const messageText = document.querySelector('.msg');
+        messageText.textContent = msg;
+    }
+
+    function announceWinner(winner) {
+        const winText = document.querySelector('.msg');
+        winText.textContent = `The winner is player ${winner}`
+    }
+
     return {
         populateDisplay, 
-        redrawDisplay
+        redrawDisplay,
+        announceWinner,
+        writeMessage
     }
 })();
 
