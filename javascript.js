@@ -135,14 +135,20 @@ const gameController = (function() {
 
     function startGame() {
         gameOver = false;
+        domDisplay.removeStartButton();
+        domDisplay.populateDisplay();
         if(!domDisplay.checkNames()) domDisplay.showForm();
     }
 
     function restartGame() {
+        if (gameOver === true && !currentPlayer.getName()) {
+            domDisplay.writeMessage('What you restarting a game that you haven\'t even started for? Click START.');
+            return;
+        }
         gameboard.resetBoard();
-        domDisplay.redrawDisplay();
         currentPlayer = x;
         startGame();
+        domDisplay.redrawDisplay();
         domDisplay.writeMessage(`Start by clicking on a cell - ${currentPlayer.getName()}'s turn`);
     }
     
@@ -158,8 +164,8 @@ const gameController = (function() {
 const domDisplay = (function() {
     function populateDisplay() {
         const container = document.querySelector('.container');
-        board = gameboard.getBoard();
-        for (let i = 0; i <= board.length; i++) {
+        const board = gameboard.getBoard();
+        for (let i = 0; i < board.length; i++) {
             const div = document.createElement('div');
             div.textContent = board[i];
             div.classList.add('cell');
@@ -174,9 +180,6 @@ const domDisplay = (function() {
         cells.forEach((cell) => {
             cell.addEventListener('click', findIndex)
         })
-
-        const startBtn = document.querySelector('.start');
-        startBtn.addEventListener('click', gameController.startGame);
 
         const enterBtn = document.querySelector('.enter');
         enterBtn.addEventListener('click', extractNames);
@@ -197,6 +200,7 @@ const domDisplay = (function() {
 
         gameController.setPlayerNames(playerOneName, playerTwoName);
         closeDialog();
+        writeMessage('');
     }
 
     function closeDialog() {
@@ -237,16 +241,21 @@ const domDisplay = (function() {
         if (playerOne.value) return true;
     }
 
+    function removeStartButton() {
+        if(!startBtn) return;
+        startBtn.remove();
+    }
+
+    const startBtn = document.querySelector('.start');
+    startBtn.addEventListener('click', gameController.startGame);
     return {
         populateDisplay, 
         redrawDisplay,
         announceWinner,
         writeMessage,
         showForm,
-        checkNames
+        checkNames,
+        removeStartButton
     }
 })();
-
-domDisplay.populateDisplay()
-
 
