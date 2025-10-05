@@ -137,12 +137,20 @@ const gameController = (function() {
         gameOver = false;
         domDisplay.showForm();
     }
+
+    function restartGame() {
+        gameOver =  true;
+        gameboard.resetBoard();
+        domDisplay.redrawDisplay();
+        domDisplay.writeMessage('Welcome to Tic-Tac-Toe! Press START to play!');
+    }
     
     return {
         checkWin,
         playRound,
         startGame,
-        setPlayerNames
+        setPlayerNames,
+        restartGame
     }
 })();
 
@@ -171,6 +179,9 @@ const domDisplay = (function() {
 
         const enterBtn = document.querySelector('.enter');
         enterBtn.addEventListener('click', extractNames);
+
+        const restartBtn = document.querySelector('.restart');
+        restartBtn.addEventListener('click', gameController.restartGame);
     }
 
     function extractNames(event) {
