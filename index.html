@@ -8,7 +8,24 @@
     <title>Tic-Tac-Toe</title>
 </head>
 <body>
-    <span class="msg"></span>
+    <dialog class="dialog">
+        <form>
+            <div class="inputContainer">
+                <label for="playerOne">Player 1 Name: </label>
+                <input type="text" id="playerOne" name="playerOneName" placeholder="Harry Potter" required>
+            </div>
+            <div class="inputContainer">
+                <label for="playerTwo">Player 2 Name: </label>
+                <input type="text" id="playerTwo" name="playerTwoName" placeholder="Ron Wesley" required>
+            </div>
+            <button class="enter">Enter</button>
+        </form>
+    </dialog>
+    <span class="msg">Welcome to Tic-Tac-Toe! Press START to play!</span>
     <div class="container"></div>
+    <div>
+        <button class="start">START</button>
+        <button>RESTART</button>
+    </div>
 </body>
 </html>

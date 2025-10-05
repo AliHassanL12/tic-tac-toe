@@ -4,13 +4,8 @@ const gameboard = (function() {
     function writeToBoard(pos, marker) {
         pos = pos - 1; // account for how indexes are counted in arrays
         gameboard.splice(pos, 1, marker);
-        displayBoard();
         domDisplay.redrawDisplay()
         gameController.checkWin(gameboard);
-    }
-
-    function displayBoard() {
-        console.log(gameboard);
     }
 
     function resetBoard() {
@@ -27,7 +22,6 @@ const gameboard = (function() {
     }
     return {
         writeToBoard, 
-        displayBoard,
         resetBoard,
         getBoard,
         checkCellAvailability
@@ -35,6 +29,8 @@ const gameboard = (function() {
 })();
 
 function createPlayer(marker) {
+
+    let playerName = null; 
 
     function placeMarker(pos) {
         gameboard.writeToBoard(pos, marker)
@@ -44,20 +40,34 @@ function createPlayer(marker) {
         return marker;
     }
 
+    function setName(name) {
+        playerName = name;
+    }
+
+    function getName() {
+        return playerName;
+    }
     return {
         placeMarker,
-        getMarker
+        getMarker,
+        setName,
+        getName
     }
 }
 
 const gameController = (function() {
 
-    let gameOver = false;
+    let gameOver = true;
 
     const x = createPlayer('x');
     const o = createPlayer('o');
 
     let currentPlayer = x;
+
+    function setPlayerNames(fName, sName) {
+        x.setName(fName);
+        o.setName(sName);
+    }
 
     function checkWin(board) {
         const row = checkRow(board);
@@ -65,10 +75,11 @@ const gameController = (function() {
         const diagonal = checkDiagonal(board);
         const draw = checkDraw(board);
         if (row || column || diagonal) {
-            domDisplay.announceWinner(currentPlayer.getMarker());
+            domDisplay.announceWinner(currentPlayer.getName());
             endGame();
         } else if (draw) {
-            console.log('draw');
+            domDisplay.writeMessage('Game Over. Draw.');
+            endGame();
         }
     }
 
@@ -121,9 +132,17 @@ const gameController = (function() {
     function alternatePlayers() {
         currentPlayer = (currentPlayer === x) ? o : x;
     }
+
+    function startGame() {
+        gameOver = false;
+        domDisplay.showForm();
+    }
+    
     return {
         checkWin,
-        playRound
+        playRound,
+        startGame,
+        setPlayerNames
     }
 })();
 
@@ -146,6 +165,29 @@ const domDisplay = (function() {
         cells.forEach((cell) => {
             cell.addEventListener('click', findIndex)
         })
+
+        const startBtn = document.querySelector('.start');
+        startBtn.addEventListener('click', gameController.startGame);
+
+        const enterBtn = document.querySelector('.enter');
+        enterBtn.addEventListener('click', extractNames);
+    }
+
+    function extractNames(event) {
+        event.preventDefault();
+        const playerOne = document.querySelector('#playerOne');
+        const playerTwo = document.querySelector('#playerTwo');
+
+        const playerOneName = playerOne.value;
+        const playerTwoName = playerTwo.value;
+
+        gameController.setPlayerNames(playerOneName, playerTwoName);
+        closeDialog();
+    }
+
+    function closeDialog() {
+        const dialog = document.querySelector('.dialog');
+        dialog.close();
     }
 
     function findIndex() {
@@ -171,11 +213,17 @@ const domDisplay = (function() {
         winText.textContent = `The winner is player ${winner}`
     }
 
+    function showForm() {
+        const dialog = document.querySelector('.dialog');
+        dialog.showModal();
+    }
+
     return {
         populateDisplay, 
         redrawDisplay,
         announceWinner,
-        writeMessage
+        writeMessage,
+        showForm
     }
 })();
 
