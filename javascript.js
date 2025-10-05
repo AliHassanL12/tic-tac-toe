@@ -1,17 +1,3 @@
-/*
-GAME CONTROLLER INITIALISES VALUES
-CREATE PLAYER X AND PLAYER O
-CURRENT INITIAL PLAYER IS X 
-GAMECONTROLLER STARTS GAME
-TAKE INPUT FROM USER FOR POSITION
-PLACE CURRENT PLAYER MARKER IN POSITION
-SWITCH PLAYERS
-START ANOTHER ROUND
-IF EITHER PLAYER WINS OR PLACES IN GAMEBOARD RUN OUT
-END GAME AND ANNOUNCE WINNER
-RESET BOARD
-
-*/
 const gameboard = (function() {
     let gameboard = ['x', 'o', 'x','', '', '','', '', ''];
 
@@ -56,6 +42,11 @@ function createPlayer(marker) {
 
 const gameController = (function() {
 
+    const x = createPlayer('x');
+    const o = createPlayer('o');
+
+    let currentPlayer = x;
+
     function checkWin(board) {
         const row = checkRow(board);
         const column = checkColumn(board);
@@ -86,12 +77,10 @@ const gameController = (function() {
     }
 
     function checkDiagonal(board) {
-        for (let i = 0; i <= 2; i += 2) {
-            if (board[i] === board[i+4] && board[i+4] === board[i+8] && board[i]) {
-                return true;
-            } else if (board[i+2] === board[i+4] && board[i+4] === board[i+6] && board[i+2]) {
-                return true;
-            }
+        if (board[0] === board[4] && board[4] === board[8] && board[0]) {
+            return true;
+        } else if (board[2] === board[4] && board[4] === board[6] && board[2]) {
+            return true;
         }
     }
 
@@ -101,8 +90,17 @@ const gameController = (function() {
         }
     }
 
+    function playRound(pos) {
+        currentPlayer.placeMarker(pos);
+        alternatePlayers();
+    }
+
+    function alternatePlayers() {
+        currentPlayer = (currentPlayer === x) ? o : x;
+    }
     return {
-        checkWin
+        checkWin,
+        playRound
     }
 })();
 
@@ -128,8 +126,8 @@ const domDisplay = (function() {
     }
 
     function findIndex() {
-        const index = Array.from(this.parentNode.children).indexOf(this)
-        x.placeMarker(index+1);
+        const index = Array.from(this.parentNode.children).indexOf(this) + 1;
+        gameController.playRound(index);
     }
 
     function redrawDisplay() {
@@ -146,14 +144,6 @@ const domDisplay = (function() {
     }
 })();
 
-const x = createPlayer('x');
-const o = createPlayer('o');
-
 domDisplay.populateDisplay()
-/*
-Winning conditions:
-3 in a row (1,2,3 - 4,5,6 - 7,8,9)
-3 in a column (1,4,7 - 2,5,8 - 3, 6, 9)
-3 in a diagonal (1,5,9 - 3,5,7)
-*/
+
 
