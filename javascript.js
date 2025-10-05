@@ -57,7 +57,8 @@ const gameController = (function() {
     function checkWin(board) {
         const row = checkRow(board);
         const column = checkColumn(board);
-        if (row || column) {
+        const diagonal = checkDiagonal(board);
+        if (row || column || diagonal) {
             console.log("My, my, we've got ourselves a straggler")
         }
     }
@@ -74,6 +75,16 @@ const gameController = (function() {
     function checkColumn(board) {
         for (let i = 0; i <= 2; i++) {
             if (board[i] === board[i+3] && board[i+3] === board[i+6] && board[i]) {
+                return true;
+            }
+        }
+    }
+
+    function checkDiagonal(board) {
+        for (let i = 0; i <= 2; i += 2) {
+            if (board[i] === board[i+4] && board[i+4] === board[i+8] && board[i]) {
+                return true;
+            } else if (board[i+2] === board[i+4] && board[i+4] === board[i+6] && board[i+2]) {
                 return true;
             }
         }
