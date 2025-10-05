@@ -52,6 +52,8 @@ function createPlayer(marker) {
 
 const gameController = (function() {
 
+    let gameOver = false;
+
     const x = createPlayer('x');
     const o = createPlayer('o');
 
@@ -64,9 +66,14 @@ const gameController = (function() {
         const draw = checkDraw(board);
         if (row || column || diagonal) {
             domDisplay.announceWinner(currentPlayer.getMarker());
+            endGame();
         } else if (draw) {
             console.log('draw');
         }
+    }
+
+    function endGame() {
+        gameOver = true;
     }
 
     function checkRow(board) {
@@ -101,6 +108,7 @@ const gameController = (function() {
     }
 
     function playRound(pos) {
+        if (gameOver) return
         if (!gameboard.checkCellAvailability(pos)) {
             domDisplay.writeMessage('That cell is already taken! Choose another');
             return;
