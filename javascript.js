@@ -56,7 +56,8 @@ const gameController = (function() {
 
     function checkWin(board) {
         const row = checkRow(board);
-        if (row) {
+        const column = checkColumn(board);
+        if (row || column) {
             console.log("My, my, we've got ourselves a straggler")
         }
     }
@@ -65,6 +66,14 @@ const gameController = (function() {
         for (let i = 0; i < board.length; i += 3) {
             // check if row is all equal to one another and if so, return true;
             if (board[i] === board[i+1] && board[i+1] === board[i+2] && board[i]) {
+                return true;
+            }
+        }
+    }
+
+    function checkColumn(board) {
+        for (let i = 0; i <= 2; i++) {
+            if (board[i] === board[i+3] && board[i+3] === board[i+6] && board[i]) {
                 return true;
             }
         }
