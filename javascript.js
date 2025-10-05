@@ -13,7 +13,7 @@ RESET BOARD
 
 */
 const gameboard = (function() {
-    let gameboard = ['', '', '','', '', '','', '', ''];
+    let gameboard = ['x', 'o', 'x','', '', '','', '', ''];
 
     function writeToBoard(pos, marker) {
         pos = pos - 1; // account for how indexes are counted in arrays
@@ -30,10 +30,15 @@ const gameboard = (function() {
         gameboard = ['', '', '','', '', '','', '', ''];
     }
 
+    function getBoard() {
+        return gameboard;
+    }
+
     return {
         writeToBoard, 
         displayBoard,
-        resetBoard
+        resetBoard,
+        getBoard
     }
 })();
 
@@ -100,9 +105,27 @@ const gameController = (function() {
     }
 })();
 
+const domDisplay = (function() {
+    function populateDisplay() {
+        const container = document.querySelector('.container');
+        board = gameboard.getBoard();
+        for (let i = 0; i <= board.length; i++) {
+            const div = document.createElement('div');
+            div.textContent = board[i];
+            div.classList.add('cell');
+            container.appendChild(div);
+        }
+    }
+
+    return {
+        populateDisplay
+    }
+})();
+
 const x = createPlayer('x');
 const o = createPlayer('o');
 
+domDisplay.populateDisplay()
 /*
 Winning conditions:
 3 in a row (1,2,3 - 4,5,6 - 7,8,9)
