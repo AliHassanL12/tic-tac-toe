@@ -137,21 +137,24 @@ const gameController = (function() {
         gameOver = false;
         domDisplay.removeStartButton();
         domDisplay.populateDisplay();
-        if(!domDisplay.checkNames()) domDisplay.showForm();
+        domDisplay.showForm();
     }
 
     function restartGame() {
-        if (gameOver === true && !currentPlayer.getName()) {
-            domDisplay.writeMessage('What you restarting a game that you haven\'t even started for? Click START.');
-            return;
-        }
+        if (gameNotStarted()) return;
         gameboard.resetBoard();
         currentPlayer = x;
-        startGame();
+        gameOver = false;
         domDisplay.redrawDisplay();
         domDisplay.writeMessage(`Start by clicking on a cell - ${currentPlayer.getName()}'s turn`);
     }
     
+    function gameNotStarted() {
+        if (gameOver === true && !currentPlayer.getName()) {
+            domDisplay.writeMessage('What you restarting a game that you haven\'t even started for? Click START.');
+            return true;
+        }
+    }
     return {
         checkWin,
         playRound,
@@ -236,11 +239,6 @@ const domDisplay = (function() {
         dialog.showModal();
     }
 
-    function checkNames() {
-        const playerOne = document.querySelector('#playerOne');
-        if (playerOne.value) return true;
-    }
-
     function removeStartButton() {
         if(!startBtn) return;
         startBtn.remove();
@@ -258,7 +256,6 @@ const domDisplay = (function() {
         announceWinner,
         writeMessage,
         showForm,
-        checkNames,
         removeStartButton
     }
 })();
