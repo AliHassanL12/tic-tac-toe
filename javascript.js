@@ -135,14 +135,15 @@ const gameController = (function() {
 
     function startGame() {
         gameOver = false;
-        domDisplay.showForm();
+        if(!domDisplay.checkNames()) domDisplay.showForm();
     }
 
     function restartGame() {
-        gameOver =  true;
         gameboard.resetBoard();
         domDisplay.redrawDisplay();
-        domDisplay.writeMessage('Welcome to Tic-Tac-Toe! Press START to play!');
+        currentPlayer = x;
+        startGame();
+        domDisplay.writeMessage(`Start by clicking on a cell - ${currentPlayer.getName()}'s turn`);
     }
     
     return {
@@ -185,6 +186,8 @@ const domDisplay = (function() {
     }
 
     function extractNames(event) {
+        const form = document.querySelector('.form');
+        if (!form.checkValidity()) return;
         event.preventDefault();
         const playerOne = document.querySelector('#playerOne');
         const playerTwo = document.querySelector('#playerTwo');
@@ -229,12 +232,18 @@ const domDisplay = (function() {
         dialog.showModal();
     }
 
+    function checkNames() {
+        const playerOne = document.querySelector('#playerOne');
+        if (playerOne.value) return true;
+    }
+
     return {
         populateDisplay, 
         redrawDisplay,
         announceWinner,
         writeMessage,
-        showForm
+        showForm,
+        checkNames
     }
 })();
 
