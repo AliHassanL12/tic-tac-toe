@@ -30,14 +30,10 @@ const gameboard = (function() {
         gameboard = ['', '', '','', '', '','', '', ''];
     }
 
-    function getBoard() {
-        return gameboard;
-    }
     return {
         writeToBoard, 
         displayBoard,
-        resetBoard,
-        getBoard
+        resetBoard
     }
 })();
 
@@ -58,8 +54,11 @@ const gameController = (function() {
         const row = checkRow(board);
         const column = checkColumn(board);
         const diagonal = checkDiagonal(board);
+        const draw = checkDraw(board);
         if (row || column || diagonal) {
             console.log("My, my, we've got ourselves a straggler")
+        } else if (draw) {
+            console.log('draw');
         }
     }
 
@@ -87,6 +86,12 @@ const gameController = (function() {
             } else if (board[i+2] === board[i+4] && board[i+4] === board[i+6] && board[i+2]) {
                 return true;
             }
+        }
+    }
+
+    function checkDraw(board) {
+        if (!board.includes("")) {
+            return true;
         }
     }
 
